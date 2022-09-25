@@ -1,4 +1,4 @@
-package com.rubendepaz.holaluztest;
+package domain.model;
 
 import com.opencsv.bean.CsvBindByPosition;
 import lombok.Getter;

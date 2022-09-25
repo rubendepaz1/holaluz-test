@@ -1,7 +1,8 @@
-package com.rubendepaz.holaluztest;
+package domain.utils;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import domain.model.ReadingBean;
 
 import java.io.Reader;
 import java.nio.file.Files;

@@ -1,4 +1,6 @@
-package com.rubendepaz.holaluztest;
+package domain.utils;
+
+import domain.model.ReadingBean;
 
 import java.util.ArrayList;
 import java.util.List;

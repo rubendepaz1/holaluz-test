@@ -36,4 +36,17 @@ que el fichero de entrada es **2016-readings.csv** que es un fichero que tendrem
   docker run -i -v ${PWD}:/app/files rubendepaz1/holaluz files/2016-readings.csv
 ```
 
-5. La aplicación controla que se pasa cómo parámetro el fichero de lecturas, y si no se encuentra se muestra un mensaje
+5. La aplicación controla que se pasa cómo parámetro el fichero de lecturas, y si no se encuentra se muestra un mensajeç
+6. La salida esperada es una tabla con las lecturas desviadas más de un 50% por encima o por debajo de la media de cada cliente:
+
+```
+Parsing CSV...
+Number of records: 120
+| Client              | Month              | Suspicious         | Median
+ -------------------------------------------------------------------------------
+|583ef6329d916        |2016-09             |2479               |37791.333333333336
+|583ef6329d7b9        |2016-09             |3564               |39671.75
+|583ef6329d89b        |2016-09             |162078               |63849.75
+|583ef6329d89b        |2016-10             |7759               |63849.75
+
+```

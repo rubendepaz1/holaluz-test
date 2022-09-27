@@ -2,7 +2,7 @@ package domain.service;
 
 import domain.model.ReadingBean;
 import domain.model.Readings;
-import domain.utils.CsvReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -11,7 +11,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,9 +18,14 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.averagingInt;
 
 @Service
-@ComponentScan({"domain.utils"})
+@ComponentScan({"domain.service"})
 public class ReadingsService {
 
+    @Autowired
+    CsvParser csvParser;
+
+    @Autowired
+    XmlParser xmlParser;
 
     public ReadingsService() throws Exception {
     }
@@ -32,11 +36,11 @@ public class ReadingsService {
             File myFile = new File(args);
             List<ReadingBean> readings = null;
             if (StringUtils.getFilenameExtension(myFile.getPath()).equals("csv")){
-                readings = parseCsv(myFile);
+                readings = csvParser.parseCsv(myFile);
                 System.out.println("Parsing CSV...");
             }
             if (StringUtils.getFilenameExtension(myFile.getPath()).equals("xml")){
-                readings = parseXml(myFile);
+                readings = xmlParser.parseXml(myFile);
                 System.out.println("Parsing XML...");
             }
 
@@ -69,26 +73,6 @@ public class ReadingsService {
                 System.out.println("|"+reading.getClient()+"        "+"|"+reading.getPeriod()+"             |"+reading.getReading()+"               |"+ median);
             }
         }
-    }
-
-    private List<ReadingBean> parseXml(File myFile){
-        JAXBContext jaxbContext;
-        try
-        {
-            jaxbContext = JAXBContext.newInstance(Readings.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            Readings r= (Readings) jaxbUnmarshaller.unmarshal(myFile);
-            return r.getReadings();
-        }
-        catch (JAXBException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private List<ReadingBean> parseCsv(File myFile) throws Exception {
-        return CsvReader.beanBuilder(Paths.get(myFile.toURI()), ReadingBean.class);
     }
 
 }

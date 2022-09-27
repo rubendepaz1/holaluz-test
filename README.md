@@ -31,8 +31,9 @@ que el fichero de entrada es **2016-readings.csv** que es un fichero que tendrem
 ```console
   docker pull rubendepaz1/holaluz:latest
 ```
-Y entonces para ejecutarla habría que añadir el usuario:
+>Y entonces para ejecutarla habría que añadir el usuario:
 ```console
   docker run -i -v ${PWD}:/app/files rubendepaz1/holaluz files/2016-readings.csv
 ```
+
 5. La aplicación controla que se pasa cómo parámetro el fichero de lecturas, y si no se encuentra se muestra un mensaje

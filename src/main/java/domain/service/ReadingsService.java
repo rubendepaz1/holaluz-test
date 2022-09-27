@@ -1,11 +1,16 @@
 package domain.service;
 
 import domain.model.ReadingBean;
+import domain.model.Readings;
 import domain.utils.CsvReader;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.File;
-import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
@@ -14,34 +19,37 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.averagingInt;
 
 @Service
+@ComponentScan({"domain.utils"})
 public class ReadingsService {
 
 
     public ReadingsService() throws Exception {
     }
 
-    public void findSuspiciusReadings(String[] args){
+    public void findSuspiciusReadings(String args){
         try {
 
-            File myFile = new File(args[0]);
-            URI fileUri = null;
-            if(myFile.exists()) {
-                fileUri = myFile.toURI();
-            }else {
-                System.out.println("Unnable to find "+args[0]+" file");
-                System.exit(0);
+            File myFile = new File(args);
+            List<ReadingBean> readings = null;
+            if (StringUtils.getFilenameExtension(myFile.getPath()).equals("csv")){
+                readings = parseCsv(myFile);
+                System.out.println("Parsing CSV...");
+            }
+            if (StringUtils.getFilenameExtension(myFile.getPath()).equals("xml")){
+                readings = parseXml(myFile);
+                System.out.println("Parsing XML...");
             }
 
-            List<ReadingBean> readings = CsvReader.beanBuilder(Paths.get(fileUri), ReadingBean.class);
 
             Map<String, Double> medianPerClient = readings.stream()
                     .collect(Collectors.groupingBy((ReadingBean::getClient), averagingInt(ReadingBean::getReading)));
 
             System.out.println("| Client              | Month              | Suspicious         | Median");
             System.out.println(" -------------------------------------------------------------------------------");
+            List<ReadingBean> finalReadings = readings;
             medianPerClient.forEach((k, v) -> {
                 try {
-                    printSuspiciusReadings(k, v, readings);
+                    printSuspiciusReadings(k, v, finalReadings);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -55,10 +63,32 @@ public class ReadingsService {
     private void printSuspiciusReadings(String client, Double median, List<ReadingBean> readingsBean) throws Exception {
 
         for (ReadingBean reading : readingsBean) {
-            if(reading.getClient().equals(client) && (reading.getReading() < ((50 * median) / 100) || reading.getReading() > ((150 * median) / 100))){
+            if(reading.getClient().equals(client)
+                    && (reading.getReading() < ((50 * median) / 100)
+                    || reading.getReading() > ((150 * median) / 100))){
                 System.out.println("|"+reading.getClient()+"        "+"|"+reading.getPeriod()+"             |"+reading.getReading()+"               |"+ median);
             }
         }
+    }
+
+    private List<ReadingBean> parseXml(File myFile){
+        JAXBContext jaxbContext;
+        try
+        {
+            jaxbContext = JAXBContext.newInstance(Readings.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            Readings r= (Readings) jaxbUnmarshaller.unmarshal(myFile);
+            return r.getReadings();
+        }
+        catch (JAXBException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private List<ReadingBean> parseCsv(File myFile) throws Exception {
+        return CsvReader.beanBuilder(Paths.get(myFile.toURI()), ReadingBean.class);
     }
 
 }

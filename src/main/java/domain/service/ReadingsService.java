@@ -1,15 +1,11 @@
 package domain.service;
 
 import domain.model.ReadingBean;
-import domain.model.Readings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.util.List;
 import java.util.Map;

@@ -44,10 +44,10 @@ public class ReadingsService {
                 System.out.println("Parsing XML...");
             }
 
-
             Map<String, Double> medianPerClient = readings.stream()
                     .collect(Collectors.groupingBy((ReadingBean::getClient), averagingInt(ReadingBean::getReading)));
 
+            System.out.println("Number of records: "+readings.size());
             System.out.println("| Client              | Month              | Suspicious         | Median");
             System.out.println(" -------------------------------------------------------------------------------");
             List<ReadingBean> finalReadings = readings;
@@ -55,17 +55,17 @@ public class ReadingsService {
                 try {
                     printSuspiciusReadings(k, v, finalReadings);
                 } catch (Exception e) {
+                    System.out.println(e.getMessage());
                     throw new RuntimeException(e);
                 }
             });
 
         } catch (Exception e) {
-            throw new RuntimeException("Error during csv processing", e);
+            throw new RuntimeException("Error during processing", e);
         }
     }
 
     private void printSuspiciusReadings(String client, Double median, List<ReadingBean> readingsBean) throws Exception {
-
         for (ReadingBean reading : readingsBean) {
             if(reading.getClient().equals(client)
                     && (reading.getReading() < ((50 * median) / 100)

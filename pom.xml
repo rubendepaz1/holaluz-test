@@ -71,6 +71,12 @@
             <version>4.5.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-core</artifactId>
+            <version>1.7.3</version>
+            <scope>test</scope>
+        </dependency>
 
 
     </dependencies>

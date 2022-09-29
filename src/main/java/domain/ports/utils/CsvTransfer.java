@@ -1,4 +1,4 @@
-package domain.utils;
+package domain.ports.utils;
 
 import domain.model.ReadingBean;
 

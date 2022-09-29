@@ -1,10 +1,10 @@
-package domain.service;
+package domain.ports;
 
 import domain.model.ReadingBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.util.List;
@@ -14,31 +14,16 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.averagingInt;
 
 @Service
-@ComponentScan({"domain.service"})
+@ComponentScan({"domain.ports"})
+@NoArgsConstructor
 public class ReadingsService {
 
-    @Autowired
-    CsvParser csvParser;
-
-    @Autowired
-    XmlParser xmlParser;
-
-    public ReadingsService() throws Exception {
-    }
-
-    public void findSuspiciusReadings(String args){
+    public void findSuspiciusReadingsFromFile(String args, FileParser fileParser){
         try {
 
             File myFile = new File(args);
             List<ReadingBean> readings = null;
-            if (StringUtils.getFilenameExtension(myFile.getPath()).equals("csv")){
-                readings = csvParser.parseCsv(myFile);
-                System.out.println("Parsing CSV...");
-            }
-            if (StringUtils.getFilenameExtension(myFile.getPath()).equals("xml")){
-                readings = xmlParser.parseXml(myFile);
-                System.out.println("Parsing XML...");
-            }
+            readings = fileParser.parseFile(myFile);
 
             Map<String, Double> medianPerClient = readings.stream()
                     .collect(Collectors.groupingBy((ReadingBean::getClient), averagingInt(ReadingBean::getReading)));

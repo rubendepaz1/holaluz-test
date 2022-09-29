@@ -1,4 +1,4 @@
-package domain.service;
+package domain.ports;
 
 import domain.model.ReadingBean;
 import domain.model.Readings;
@@ -11,9 +11,9 @@ import java.io.File;
 import java.util.List;
 
 @Component
-public class XmlParser {
+public class XmlParser implements FileParser{
 
-    public List<ReadingBean> parseXml(File myFile){
+    public List<ReadingBean> parseFile(File myFile){
         JAXBContext jaxbContext;
         try
         {

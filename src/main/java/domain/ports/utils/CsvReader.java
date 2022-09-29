@@ -1,4 +1,4 @@
-package domain.utils;
+package domain.ports.utils;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
